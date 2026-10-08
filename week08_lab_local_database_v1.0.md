@@ -117,9 +117,30 @@ class DraftListings extends Table {
 
 > ✅ **Checkpoint 1.1** บันทึกคำตอบจากคำถามด้านบนทั้ง 4 ข้อ พร้อมแนบภาพหน้าจอผลลัพธ์จาก Gemini
 
-```text
-บันทึกผลลัพธ์ที่นี่
+```dart
+- ตาราง DraftListings กำหนด Primary Key แบบ auto-increment ถูกต้องตามบทเรียน แต่ตาราง FavoriteProducts ยังไม่ถูกต้องเนื่องจาก AI ใช้ productId เป็น Primary Key แทนการสร้างคอลัมน์ id
+- ส่วนคอลัมน์ราคา AI เลือกใช้ RealColumn ได้ถูกต้องตามบทเรียนแล้วโดยไม่ต้องแก้ไข
+- สำหรับการเก็บข้อมูล AI เลือกบันทึกสำเนารายละเอียดสินค้าไว้ด้วย ซึ่งตรงตามหลัก Offline-first ทำให้แอปแสดงผลข้อมูลได้ทันทีแม้ไม่มีอินเทอร์เน็ต
+- สุดท้าย AI ไม่ได้กำหนดคำสั่ง .unique() ที่คอลัมน์ productId จึงได้แก้ไขโค้ดตาราง FavoriteProducts ใหม่โดยเพิ่มคอลัมน์ id และคำสั่งป้องกันข้อมูลซ้ำให้ถูกต้องตามบทเรียนดังนี้
+
+// ---------------------------------------------------------------------------
+class FavoriteProducts extends Table {
+  IntColumn get id => integer().autoIncrement()(); // เพิ่มคอลัมน์ id แบบ auto-increment
+  IntColumn get productId => integer().unique()(); // เพิ่มคำสั่ง .unique() เพื่อป้องกันข้อมูลซ้ำ
+  
+  TextColumn get name => text()();
+  RealColumn get price => real()();
+  TextColumn get imageUrl => text().nullable()();
+  DateTimeColumn get likedAt => dateTime().withDefault(currentDateAndTime)();
+}
+// ---------------------------------------------------------------------------
 ```
+
+<img width="1600" height="860" alt="2" src="https://github.com/user-attachments/assets/96ddfa1c-4957-4144-bfc4-befa518ae938" />
+
+<img width="1600" height="860" alt="3" src="https://github.com/user-attachments/assets/551e2116-1e0f-4ed6-9d7d-ce6c71e67cfa" />
+
+<img width="1600" height="860" alt="4" src="https://github.com/user-attachments/assets/27fb3b82-d1a8-4652-9a63-f53f1359f20d" />
 
 ---
 
