@@ -55,8 +55,54 @@
 
 บันทึกโค้ดที่ Gemini ตอบกลับมาที่ด้านล่าง
 
-```text
-บันทึกผลลัพธ์ที่นี่
+```dart
+import 'package:drift/drift.dart';
+
+// ---------------------------------------------------------------------------
+// 1. ตารางเก็บรายการสินค้าที่ถูกใจ (FavoriteProducts)
+// ---------------------------------------------------------------------------
+class FavoriteProducts extends Table {
+  // รหัสสินค้าจากระบบ API กำหนดให้เป็น Primary Key เพื่อป้องกันการกดถูกใจซ้ำ
+  IntColumn get productId => integer()();
+
+  // ชื่อสินค้า เก็บเป็น Text เพื่อแคชไว้แสดงผลทันที
+  TextColumn get name => text()();
+
+  // ราคาสินค้า รองรับทศนิยม (เช่น 199.50)
+  RealColumn get price => real()();
+
+  // URL หรือ Path รูปภาพ (เปิดให้ nullable เผื่อสินค้าบางชิ้นไม่มีรูป)
+  TextColumn get imageUrl => text().nullable()();
+
+  // เวลาที่กดถูกใจ กำหนด default เป็นเวลาปัจจุบัน สำหรับจัดเรียงล่าสุด
+  DateTimeColumn get likedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {productId};
+}
+
+// ---------------------------------------------------------------------------
+// 2. ตารางเก็บร่างประกาศขายสินค้าจาก AI (DraftListings)
+// ---------------------------------------------------------------------------
+class DraftListings extends Table {
+  // Primary key แบบ Auto Increment สำหรับระบุ Draft แต่ละใบ
+  IntColumn get id => integer().autoIncrement()();
+
+  // Path รูปภาพต้นฉบับในเครื่อง (สำคัญที่สุด เพราะ AI วิเคราะห์จากรูปนี้)
+  TextColumn get imagePath => text()();
+
+  // ชื่อประกาศ (nullable เพราะ AI อาจยังคิดไม่ออก หรือผู้ใช้ยังไม่ได้พิมพ์)
+  TextColumn get title => text().nullable()();
+
+  // หมวดหมู่สินค้า
+  TextColumn get category => text().nullable()();
+
+  // คำบรรยายสินค้าที่ AI ช่วยร่างให้
+  TextColumn get description => text().nullable()();
+
+  // เวลาที่แก้ไขล่าสุด สำหรับแสดงรายการแบบ เรียงตามที่อัปเดตล่าสุด
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
 ```
 
 
